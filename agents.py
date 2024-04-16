@@ -31,7 +31,9 @@ class CodeAnalyzerAgents:
     def code_analysis_agent(self):
         return Agent(
             role='CodeAnalyzer',
-            goal='Analyze the provided source code and describe the technologies used and the functionality and core classes, functions and how they interact',
+            goal="""
+            Analyze the provided source code and describe the technologies used and the functionality and core classes, functions and how they interact.
+            """,
             backstory="""With a critical eye and a knack for distilling complex information on source codee, you provide insightful
             analyses of the source code of an entire github repository and describe the technologies used, as well as the functionality and the core classes, functions and how they interact.""",
             verbose=True,

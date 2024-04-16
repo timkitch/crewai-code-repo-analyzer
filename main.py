@@ -30,7 +30,7 @@ crew = Crew(
     agents=[code_fetcher, code_analyzer, code_documentor, code_diagrammer],
     tasks=[fetch_code_task, analyze_code_task, document_code_task, diagram_task],
     process=Process.sequential,
-    verbose=2,
+    verbose=True,
 )
 
 # Kickoff the crew process with input from the user

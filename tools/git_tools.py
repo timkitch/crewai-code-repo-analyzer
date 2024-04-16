@@ -9,6 +9,7 @@ from langchain.tools import tool
 from crewai_tools import BaseTool
 
 import os
+import json
 
 class GitRepoFetchTools(BaseTool):
     name: str =  "Git Repo Fetcher Tool"
@@ -36,11 +37,18 @@ class GitRepoFetchTools(BaseTool):
         documents = loader.load()
         # print(len(documents))
         
-        source_code = ""
-
-        for doc in documents:
-            source_code += doc.page_content + "\n"
-        #     print(doc.page_content)
+        document_dicts = []
+        for document in documents:
+            parsed_dict = {}
+            parsed_dict['source_filename'] = document.metadata['source']
+            parsed_dict['programming_language'] = document.metadata['language'].value
+            parsed_dict['source_file_contents'] = document.page_content
+            document_dicts.append(parsed_dict)
+            
+        total_size = sum(sum(len(str(value)) for value in dict_.values()) for dict_ in document_dicts)
+        print(f"Total size of all documents: {total_size}")
+            
+        code_as_json = json.dumps(document_dicts)
         
-        return source_code
+        return code_as_json
         

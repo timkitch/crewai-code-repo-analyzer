@@ -1,0 +1,22 @@
+@startuml
+actor User
+participant "Streamlit UI" as UI
+participant "app.py" as App
+participant "ConfluenceQA" as QA
+participant "utils.py" as Utils
+participant "rerank.py" as Rerank
+
+User -> UI : Enter question
+UI -> App : Capture input
+App -> QA : Use ConfluenceQA
+QA -> App : Return processed data
+App -> Rerank : Call rerank logic
+Rerank -> QA : Retrieve documents
+QA -> Rerank : Send documents
+Rerank -> App : Send ranked results
+App -> Utils : Format documents
+Utils -> App : Return formatted docs
+App -> UI : Display results
+UI -> User : Show answers
+
+@enduml
