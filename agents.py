@@ -3,19 +3,24 @@ from textwrap import dedent
 from langchain.llms import OpenAI
 from langchain_openai import ChatOpenAI
 
+from langchain_anthropic import ChatAnthropic
+
 from dotenv import load_dotenv
 load_dotenv()
 
 from tools.git_tools import GitRepoFetchTools
 
 
-# This is an example of how to define custom agents.
-# You can define as many agents as you want.
-# You can also define custom tasks in tasks.py
 class CodeAnalyzerAgents:
     def __init__(self):
         self.OpenAIGPT35 = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.2)
         self.OpenAIGPT4 = ChatOpenAI(model_name="gpt-4-turbo", temperature=0.2)
+        self.ClaudeHaiku = ChatAnthropic(
+            model="claude-3-haiku-20240307"
+        )
+        self.ClaudeSonnet = ChatAnthropic(
+            model="claude-3-sonnet-20240229"
+        )
 
     def code_fetching_agent(self):
         return Agent(
@@ -26,7 +31,8 @@ class CodeAnalyzerAgents:
             verbose=True,
             max_iter=5,
             tools=[GitRepoFetchTools()],
-            llm=self.OpenAIGPT4
+            llm=self.ClaudeHaiku,
+            memory=True
         )
     def code_analysis_agent(self):
         return Agent(
@@ -39,7 +45,8 @@ class CodeAnalyzerAgents:
             verbose=True,
             max_iter=5,
             allow_delegation=True,
-            llm=self.OpenAIGPT4
+            llm=self.ClaudeSonnet,
+            memory=True
         )
     def code_documentation_agent(self):
         return Agent(
@@ -50,8 +57,9 @@ class CodeAnalyzerAgents:
             markdown format guidelines and maintain consistency throughout.""",
             verbose=True,
             max_iter=5,
-            allow_delegation=False,
-            llm=self.OpenAIGPT35
+            allow_delegation=True,
+            llm=self.ClaudeSonnet,
+            memory=True
         )
     def code_diagramming_agent(self):
         return Agent(
@@ -61,6 +69,7 @@ class CodeAnalyzerAgents:
             generate PlantUML that can be used to visualize the component design of the app represented by the source code.""",
             verbose=True,
             max_iter=5,
-            allow_delegation=False,
-            llm=self.OpenAIGPT4
+            # allow_delegation=False,
+            llm=self.ClaudeSonnet,
+            memory=True
         )

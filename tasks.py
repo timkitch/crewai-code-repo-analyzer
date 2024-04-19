@@ -35,6 +35,7 @@ class CodeAnalyzerTasks:
         )
     
     def analyze_code_task(self, agent, context):
+        # print("\n*****  Analyze Code Task Input:", context)
         return Task(
             description='Analyze the fetched source code to understand its functionality, technology stack, and component relationships.',
             agent=agent,
@@ -45,6 +46,7 @@ class CodeAnalyzerTasks:
         )
         
     def document_code_task(self, agent, context, callback_function):
+        # print("\n*****  Document Code Task Input:", context)
         return Task(
             description='Convert the analysis provided into a Markdown document that describes the repository comprehensively.',
             agent=agent,
@@ -62,6 +64,7 @@ class CodeAnalyzerTasks:
             callback=callback_function
         ) 
     def diagram_task(self, agent, context, callback_function):
+        # print("\n *****  Diagram Task Input:", context)
         return Task(
             description='Generate PlantUML diagram of requested type and convert to SVG.',
             agent=agent,

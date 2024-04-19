@@ -1,4 +1,3 @@
-import os
 from crewai import Agent, Task, Crew, Process
 from langchain_openai import ChatOpenAI
 
@@ -8,8 +7,8 @@ from tasks import CodeAnalyzerTasks
 agents = CodeAnalyzerAgents()
 tasks = CodeAnalyzerTasks()
 
-from file_io import save_design_doc
-from diagram_io import save_diagram
+from callbacks.file_io import save_design_doc
+from callbacks.diagram_io import save_diagram
 
 # Instantiate the agents
 code_fetcher = agents.code_fetching_agent()
@@ -30,6 +29,7 @@ crew = Crew(
     agents=[code_fetcher, code_analyzer, code_documentor, code_diagrammer],
     tasks=[fetch_code_task, analyze_code_task, document_code_task, diagram_task],
     process=Process.sequential,
+    memory=True,
     verbose=True,
 )
 
@@ -46,5 +46,5 @@ results = crew.kickoff(
 )
 
 # Print the results
-print("Crew Work Results:")
+print(f"Crew Usage Metrics: {crew.usage_metrics}")
 print(results)
