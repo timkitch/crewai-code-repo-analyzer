@@ -13,35 +13,25 @@ from callbacks.diagram_io import save_diagram
 from git_util import clone_repo, load_repo
 
 # Instantiate the agents
-# code_fetcher = agents.code_fetching_agent()
 code_analyzer = agents.code_analysis_agent()
 code_documentor = agents.code_documentation_agent()
 code_diagrammer = agents.code_diagramming_agent()
 
 # Instantiate the tasks
-# fetch_code_task = tasks.fetch_code_task(code_fetcher)
 analyze_code_task = tasks.analyze_code_task(code_analyzer)
-# document_code_task = tasks.document_code_task(
-#     code_documentor, [analyze_code_task], save_design_doc
-# )
-
 document_code_task = tasks.document_code_task(
-    code_documentor, save_design_doc
+    code_documentor, [analyze_code_task]
 )
+diagram_task = tasks.diagram_task(code_diagrammer)
 
 # diagram_task = tasks.diagram_task(code_diagrammer, [document_code_task], save_diagram)
 
-diagram_task = tasks.diagram_task(code_diagrammer)
-
-
 # Form the crew
 crew = Crew(
-    agents=[code_analyzer, code_documentor, code_diagrammer],
+    agents=[code_analyzer, code_documentor,code_diagrammer],
     tasks=[analyze_code_task, document_code_task, diagram_task],
-    # agents=[code_fetcher, code_analyzer, code_documentor, code_diagrammer],
-    # tasks=[fetch_code_task, analyze_code_task, document_code_task, diagram_task],
     process=Process.sequential,
-    # memory=True,
+    # memory=True, # get "max tokens 8192 when enable memory here - enabled in agents instead"
     verbose=2,
     
 )

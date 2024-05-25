@@ -25,21 +25,9 @@ class CodeAnalyzerAgents:
             model="claude-3-sonnet-20240229"
         )
 
-    def code_fetching_agent(self):
-        return Agent(
-            role='CodeFetcher',
-            goal='Fetch the contents of a git repository hosting Python code.',
-            backstory="""As an expert on GitHub, you understand how to extract the contents of a GitHub repository at {repository_url}. """,
-            allow_delegation=True,
-            verbose=True,
-            max_iter=5,
-            tools=[GitRepoFetchTools()],
-            llm=self.ClaudeHaiku,
-            memory=True
-        )
     def code_analysis_agent(self):
         return Agent(
-            role='CodeAnalyzer',
+            role='Code Analyzer',
             goal="""
             Thoroughly analyze the provided source code. Identify and document the following:
             - The overall purpose of the project.
@@ -58,15 +46,9 @@ class CodeAnalyzerAgents:
         )
     def code_documentation_agent(self):
         return Agent(
-        role='CodeDocumentor',
+        role='Code Documentor',
         goal="""
-        Use the analysis provided by the CodeAnalyzer to generate a comprehensive Markdown document. 
-        This document should include:
-        - An introduction to the project, outlining its purpose.
-        - A detailed description of the technology stack used.
-        - A list of all major components (e.g., classes, functions, files).
-        - Detailed documentation of each component, including its functionality and interactions with other components.
-        - Ensure the document is well-structured and follows Markdown formatting guidelines.
+        Use the analysis provided by the Code Analyzer to generate a comprehensive Markdown document describing the source code. 
         """,
         backstory="""With a knack for distilling complex information into clear and concise documentation, your task is to create a 
         comprehensive and well-structured Markdown document that accurately represents the analyzed source code.""",
@@ -78,12 +60,9 @@ class CodeAnalyzerAgents:
     )
     def code_diagramming_agent(self):
         return Agent(
-            role='ComponentDiagrammer',
+            role='Component Diagrammer',
             goal="""
-            Generate PlantUML diagram of type {diagram_type} reflecting the design of the repository. 
-            Ensure all names (e.g., classes, interfaces, functions) in the diagram exactly match those used in the source code.
-            Do not make up any names when generating a diagram. All names must appear within the provided source code.
-            The type of diagram (e.g., sequence, class, component) will be provided.
+            Generate PlantUML diagram reflecting the design based on the contents of a given source code repository. 
             """,
             backstory="""As an expert in software design and PlantUML, your role is to create precise and accurate diagrams that visualize the 
             component design of the source code. Your diagrams should be clear, accurate, and true to the source.""",
