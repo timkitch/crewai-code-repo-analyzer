@@ -1,5 +1,4 @@
-from crewai import Agent, Task, Crew, Process
-from langchain_openai import ChatOpenAI
+from crewai import Crew, Process
 
 from agents import CodeAnalyzerAgents
 from tasks import CodeAnalyzerTasks
@@ -10,7 +9,7 @@ tasks = CodeAnalyzerTasks()
 from callbacks.file_io import save_design_doc
 from callbacks.diagram_io import save_diagram
 
-from git_util import clone_repo, load_repo
+from utils.git_util import clone_repo, load_repo
 
 # Instantiate the agents
 code_analyzer = agents.code_analysis_agent()
@@ -23,8 +22,6 @@ document_code_task = tasks.document_code_task(
     code_documentor, [analyze_code_task]
 )
 diagram_task = tasks.diagram_task(code_diagrammer)
-
-# diagram_task = tasks.diagram_task(code_diagrammer, [document_code_task], save_diagram)
 
 # Form the crew
 crew = Crew(
@@ -41,7 +38,10 @@ repository_url = input("Please enter the GitHub repository URL: ")
 local_repo = clone_repo(repository_url)
 repo_contents = load_repo(local_repo)
 
-diagram_options = ["component", "class", "sequence"]
+# TODO: for sequence diagram support, may need input from user to select one or more sequences (e.g. Task human_input=True)
+# diagram_options = ["component", "class", "sequence"]
+
+diagram_options = ["component", "class"]
 print("Please select a diagram type to generate:")
 for i, option in enumerate(diagram_options, start=1):
     print(f"{i}. {option}")
@@ -55,16 +55,6 @@ results = crew.kickoff(
         "diagram_type": diagram_type,
     }
 )
-
-# diagram_type = input(
-#     "Please enter a diagram type to generate (e.g. one of component, class, sequence, etc.): "
-# )
-# results = crew.kickoff(
-#     inputs={
-#         "repository_url": repository_url,
-#         "diagram_type": diagram_type,
-#     }
-# )
 
 # Print the results
 print(f"Crew Usage Metrics: {crew.usage_metrics}")

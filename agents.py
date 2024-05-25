@@ -8,9 +8,6 @@ from langchain_anthropic import ChatAnthropic
 from dotenv import load_dotenv
 load_dotenv()
 
-from tools.git_tools import GitRepoFetchTools
-
-
 class CodeAnalyzerAgents:
     def __init__(self):
         self.OpenAIGPT35 = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.2)

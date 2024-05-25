@@ -1,7 +1,4 @@
 from crewai import Task
-from textwrap import dedent
-
-from tools.git_tools import GitRepoFetchTools
 
 from crewai_tools import DirectoryReadTool, FileReadTool
 
