@@ -3,6 +3,14 @@ from textwrap import dedent
 
 from tools.git_tools import GitRepoFetchTools
 
+from crewai_tools import DirectoryReadTool, FileReadTool
+
+from tools.plantuml_generator import PlantUMLDiagramGeneratorTool
+
+directory_read_tool = DirectoryReadTool(directory='./plantuml_help')
+file_read_tool = FileReadTool()
+plantuml_generator_tool = PlantUMLDiagramGeneratorTool()
+
 
 # This is an example of how to define custom tasks.
 # You can define as many tasks as you want.
@@ -34,43 +42,63 @@ class CodeAnalyzerTasks:
             inputs={'repository_url': 'repository_url'}  # Make sure this key matches the kickoff input
         )
     
-    def analyze_code_task(self, agent, context):
-        # print("\n*****  Analyze Code Task Input:", context)
+    def analyze_code_task(self, agent):
         return Task(
-            description='Analyze the fetched source code to understand its functionality, technology stack, and component relationships.',
-            agent=agent,
-            async_execution=True,
-            context=context,
-            expected_output="""A structured summary of the code's purpose, technologies used, and an analysis of major components. List each component, its functionality, and how it interacts with other components. Components may be classes, functions or source filenames, as appropriate. 
-            """
+            description="""Analyze the provided source code repository to understand its purpose, technologies used, and major components.
+            This is the full source code: {repo_contents}
+            """,
+            expected_output="A detailed analysis report covering the technologies, APIs, frameworks used, and a list of components and their interactions.",
+            agent=agent
         )
         
-    def document_code_task(self, agent, context, callback_function):
-        # print("\n*****  Document Code Task Input:", context)
+    def document_code_task(self, agent, callback_function):
         return Task(
-            description='Convert the analysis provided into a Markdown document that describes the repository comprehensively.',
-            agent=agent,
-            context=context,
-            expected_output="""Markdown containing a detailed description of the repository.
-                Example Output: 
-                '## Pomodoro UI Project\n\n
-                **Project Summary:
-                ** A simple UI for the Pomodoro Technique.\n\n
-                **Core Technologies Used:**\n\n
-                - HTML, JavaScript\n\n
-                **Main Components and Functionality:**\n\n
-                ** The app uses a single HTML page which calls JavaScript functions to start, stop and reset the Pomodoro timer.\n\n'
+            description="""
+                Generate a comprehensive Markdown document based on the analysis provided by the CodeAnalyzer. 
+                Ensure the document follows the provided template for consistency, and includes a detailed breakdown
+                of all components (e.g., classes, interfaces, functions) and their interactions.
+                """,
+            expected_output="""
+                # Project Name
+
+                ## Overview
+                Provide a brief overview of the project's purpose and functionality.
+
+                ## Technology Stack
+                List and describe the technologies, frameworks, and libraries used in the project.
+
+                - **Language:** [Programming Language]
+                - **Frameworks:** [Frameworks Used]
+                - **Libraries:** [Libraries Used]
+                - **Tools:** [Tools Used]
+
+                ## Directory Structure
+                Outline the directory structure of the project with brief descriptions of each directory and file.
+                Here's an example of the directory structure output:
+                ├── src/
+                │ ├── main.py - Entry point of the application
+                │ ├── utils.py - Utility functions
+                │ └── ...
+                ├── tests/
+                │ ├── test_main.py - Tests for main.py
+                │ └── ...
+                └── README.md - Project documentation
             """,
+            agent=agent,
+            # async_execution=False,
             callback=callback_function
         ) 
-    def diagram_task(self, agent, context, callback_function):
+    def diagram_task(self, agent):
         # print("\n *****  Diagram Task Input:", context)
         return Task(
-            description='Generate PlantUML diagram of requested type and convert to SVG.',
-            agent=agent,
-            context=context,
-            expected_output="""PlantUML for the requested diagram.
+            description="""
+            Generate PlantUML {diagram_type} diagram for the provided design description.
+            The diagram should be based on the full source code: {repo_contents} and only contain names of classes, interfaces, and functions as they
+            appear within the source code.
             """,
-            inputs={'diagram_type': 'diagram_type'},
-            callback=callback_function
+            agent=agent,
+            expected_output="""PlantUML for the requested diagram that conforms to the PlantUML syntax, as per the PlantUML reference guide and examples.
+            """,
+            tools=[directory_read_tool, file_read_tool, plantuml_generator_tool],
+            # callback=callback_function
         )

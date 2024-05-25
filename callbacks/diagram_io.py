@@ -39,13 +39,19 @@ def save_diagram(task_output):
     print(f"Design diagram saved as {svg_output_file}")
     
 def extract_plantuml(raw_output):
-    match = re.search('```plantuml\n(.+?)\n```', raw_output, re.DOTALL)
+    match = re.search(r'@startuml.*?@enduml', raw_output, re.DOTALL)
     if match:
-        plantuml_script = match.group(1)
+        plantuml_script = match.group(0)
     else:
         # raise exception
         raise Exception('PlantUML script not found in raw output')
     
     return plantuml_script
-    
+
+def main():
+    extract_plantuml("```plantuml@startuml\nAlice -> Bob: Hello\n@endumlgarbagh= yadhhndfkm 12$#")
+
+if __name__ == "__main__":
+    main()
+
     

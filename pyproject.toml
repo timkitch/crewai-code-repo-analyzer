@@ -6,11 +6,12 @@ authors = ["Tim Kitchens <timkitch@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = ">=3.10.0,<3.12"
-crewai = {extras = ["tools"], version = "^0.22.5"}
+crewai = {extras = ["tools"], version = "^0.30.11"}
 pydantic = "^2.6.3"
 load-dotenv = "^0.1.0"
-crewai-tools = "^0.0.15"
+crewai-tools = ">=0.2.6,<0.3.0"
 plantweb = "^1.2"
+langchain_community = "^0.0.29"
 langchain_anthropic = "^0.1"
 
 [tool.pyright]
